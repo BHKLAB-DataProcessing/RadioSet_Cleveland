@@ -16,6 +16,9 @@ rule get_radioset:
         S3.remote(prefix + "download/XRT_CTD2_Dose_Response.xlsx")
     output:
         S3.remote(prefix + filename)
+    resources:
+        mem_mb = 10000,
+        disk_mb = 8000
     shell:
         """
         Rscript scripts/get_Cleveland.R {prefix} {filename}       
