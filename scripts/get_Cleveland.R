@@ -139,9 +139,8 @@ curationCell <- curationCell[!duplicated(curationCell[, "unique.cellid"]), ]
 rownames(curationCell) <- curationCell[, "unique.cellid"]
 rownames(curationTissue) <- curationCell[, "unique.cellid"]
 
-cells <- cellNames(CCLE)
-print(cells)
-CCLEint <- PharmacoGx::subsetTo(CCLE, cells = intersect(rownames(cell), cells))
+cells <- PharmacoGx::sampleInfo(CCLE)
+CCLEint <- PharmacoGx::subsetTo(CCLE, cells = intersect(rownames(cell), rownames(cells)))
 
 
 Cleveland <- RadioSet(
