@@ -10,13 +10,14 @@ library(gdata)
 library(parallel)
 library(abind)
 library(RadioGx)
+library(PharmacoGx)
 options(stringsAsFactors = FALSE)
 
 args <- commandArgs(trailingOnly = TRUE)
 work_dir <- args[1]
 
-responsedata <- read.xls(file.path(work_dir, 'download/XRT_CTD2_Dose_Response.xlsx'),1,stringsAsFactors = F)
-responsedata <- responsedata[,-c(43:48)]
+responsedata <- read.xls(file.path(work_dir, "download/XRT_CTD2_Dose_Response.xlsx"), 1, stringsAsFactors = F)
+responsedata <- responsedata[, -c(43:48)]
 # responsedata$cell_line <- gsub("786O", "7860", responsedata$cell_line)
 # responsedata$cell_line <- gsub("COLO320", "COLO320HSR", responsedata$cell_line)
 # responsedata$cell_line <- gsub("COLO320", "COLO320HSR", responsedata$cell_line)
@@ -40,7 +41,7 @@ responsedata <- responsedata[,-c(43:48)]
 
 
 # approx.matches <- sapply(responsedata$cell_line[which(no.matches)],function(x) {
-# 	paste(cell.all[agrep(gsub("\\s", "", x = toupper(x)), 
+# 	paste(cell.all[agrep(gsub("\\s", "", x = toupper(x)),
 # 		  gsub("\\s", "", x = toupper(cell.all[,"unique.cellid"]))),"unique.cellid"], collapse = "|||")}
 # )
 
@@ -88,29 +89,35 @@ unique.cellid <- cell.all[cell.exact.match, "unique.cellid"]
 unique.tissueid <- cell.all[cell.exact.match, "unique.tissueid"]
 # rownames(responsedata) <- responsedata$cell_line
 
-responsedata1 <- responsedata[,c(2:12,22,25,40:42)]
-colnames(responsedata1) <- c("CellLine","SeedingDensity","1Gy-rep1","1Gy-rep2","2Gy","3Gy","4Gy","5Gy","6Gy","8Gy","10Gy","AUC","CellLineSynonym",
-                             "Primarysite","Histology","HistologySubType")
+responsedata1 <- responsedata[, c(2:12, 22, 25, 40:42)]
+colnames(responsedata1) <- c(
+  "CellLine", "SeedingDensity", "1Gy-rep1", "1Gy-rep2", "2Gy", "3Gy", "4Gy", "5Gy", "6Gy", "8Gy", "10Gy", "AUC", "CellLineSynonym",
+  "Primarysite", "Histology", "HistologySubType"
+)
 
-cell <- data.frame(responsedata1$CellLine,responsedata1$Primarysite,responsedata1$Histology,responsedata1$HistologySubType)
+cell <- data.frame(responsedata1$CellLine, responsedata1$Primarysite, responsedata1$Histology, responsedata1$HistologySubType)
 cell <- cbind(cellid = unique.cellid, tissueid = unique.tissueid, cell)
 
 cell <- cell[!duplicated(cell$cellid), ]
 
-colnames(cell) <- c("cellid","tissueid","CellLine", "Primarysite", "Histology","Subhistology")
+colnames(cell) <- c("cellid", "tissueid", "CellLine", "Primarysite", "Histology", "Subhistology")
 rownames(cell) <- cell$cellid
 
 # sensitivity object
-info <- data.frame(unique.cellid,rep("radiation",nrow(responsedata1)),rep(1,each=nrow(responsedata1)),rep(1,each=nrow(responsedata1)),
-                   rep(2,each=nrow(responsedata1)),rep(3,each=nrow(responsedata1)),rep(4,each=nrow(responsedata1)),rep(5,each=nrow(responsedata1)),
-                   rep(6,each=nrow(responsedata1)),rep(8,each=nrow(responsedata1)),rep(10,each=nrow(responsedata1)))
-colnames(info) <- c("cellid","radiation.type","Dose1-1Gy-rep1","Dose1-1Gy-rep2","Dose2-2Gy","Dose3-3Gy","Dose4-4Gy",
-                    "Dose5-5Gy","Dose6-6Gy","Dose8-8Gy","Dose10-10Gy")
-rownames(info) <- paste(info$cellid,info$radiationtype,seq(1, nrow(info)),sep="_")
+info <- data.frame(
+  unique.cellid, rep("radiation", nrow(responsedata1)), rep(1, each = nrow(responsedata1)), rep(1, each = nrow(responsedata1)),
+  rep(2, each = nrow(responsedata1)), rep(3, each = nrow(responsedata1)), rep(4, each = nrow(responsedata1)), rep(5, each = nrow(responsedata1)),
+  rep(6, each = nrow(responsedata1)), rep(8, each = nrow(responsedata1)), rep(10, each = nrow(responsedata1))
+)
+colnames(info) <- c(
+  "cellid", "radiation.type", "Dose1-1Gy-rep1", "Dose1-1Gy-rep2", "Dose2-2Gy", "Dose3-3Gy", "Dose4-4Gy",
+  "Dose5-5Gy", "Dose6-6Gy", "Dose8-8Gy", "Dose10-10Gy"
+)
+rownames(info) <- paste(info$cellid, info$radiationtype, seq(1, nrow(info)), sep = "_")
 
-test1 <- info[,c(3:11)]
-test2 <- responsedata1[,c(3:11)]
-raw <- abind(test1,test2,along = 3)
+test1 <- info[, c(3:11)]
+test2 <- responsedata1[, c(3:11)]
+raw <- abind(test1, test2, along = 3)
 rownames(raw) <- rownames(info)
 
 colnames(raw) <- paste0("doses", seq_len(ncol(raw)))
@@ -121,35 +128,37 @@ profiles <- data.frame(responsedata1$AUC)
 colnames(profiles) <- c("AUC_published")
 rownames(profiles) <- rownames(info)
 
-CCLE <- readRDS(file.path(work_dir, 'download/CCLE.rds'))
+CCLE <- readRDS(file.path(work_dir, "download/CCLE.rds"))
 
-curationCell <- cell.all[cell.exact.match, c("unique.cellid","Cleveland.cellid")]
-curationTissue <- cell.all[cell.exact.match, c("unique.tissueid","Cleveland.tissueid")]
+curationCell <- cell.all[cell.exact.match, c("unique.cellid", "Cleveland.cellid")]
+curationTissue <- cell.all[cell.exact.match, c("unique.tissueid", "Cleveland.tissueid")]
 
-curationTissue <- curationTissue[!duplicated(curationCell[,"unique.cellid"]),]
-curationCell <- curationCell[!duplicated(curationCell[,"unique.cellid"]),]
-rownames(curationCell) <- curationCell[,"unique.cellid"]
-rownames(curationTissue) <- curationCell[,"unique.cellid"]
+curationTissue <- curationTissue[!duplicated(curationCell[, "unique.cellid"]), ]
+curationCell <- curationCell[!duplicated(curationCell[, "unique.cellid"]), ]
+rownames(curationCell) <- curationCell[, "unique.cellid"]
+rownames(curationTissue) <- curationCell[, "unique.cellid"]
 
 CCLEint <- PharmacoGx::subsetTo(CCLE, cells = intersect(rownames(cell), PharmacoGx::cellNames(CCLE)))
 
 
-Cleveland <- RadioSet(name="Cleveland", 
-					  cell = cell,
-					  molecularProfiles = CCLEint@molecularProfiles,
-					  radiation = data.frame("radiation", row.names = "radiation"),
-                      sensitivityInfo =info, 
-                      sensitivityRaw = raw, 
-                      sensitivityProfiles = profiles,
-                      datasetType = c("sensitivity"), 
-					  curationCell = curationCell,
-					  curationTissue = curationTissue,
-					  verify = TRUE)
+Cleveland <- RadioSet(
+  name = "Cleveland",
+  cell = cell,
+  molecularProfiles = CCLEint@molecularProfiles,
+  radiation = data.frame("radiation", row.names = "radiation"),
+  sensitivityInfo = info,
+  sensitivityRaw = raw,
+  sensitivityProfiles = profiles,
+  datasetType = c("sensitivity"),
+  curationCell = curationCell,
+  curationTissue = curationTissue,
+  verify = TRUE
+)
 
-saveRDS(Cleveland,file=file.path(work_dir, "RadioSet_Cleveland.rds"))
+saveRDS(Cleveland, file = file.path(work_dir, "RadioSet_Cleveland.rds"))
 
 
-#radSig <- radSensitivitySig(Cleveland, "Kallisto_0.46.1.rnaseq", sensitivity.measure="AUC_published", nthread=3)
+# radSig <- radSensitivitySig(Cleveland, "Kallisto_0.46.1.rnaseq", sensitivity.measure="AUC_published", nthread=3)
 
 # # Micro-array
 # load('~/PSets/CCLE.RData')
@@ -209,4 +218,3 @@ saveRDS(Cleveland,file=file.path(work_dir, "RadioSet_Cleveland.rds"))
 #                                 sensitivityInfo =info, sensitivityRaw = raw, sensitivityProfiles = profiles,datasetType = c("sensitivity"), verify = TRUE)
 
 # save(Moffit.radiation,file="MoffitRadiation.RData")
-
