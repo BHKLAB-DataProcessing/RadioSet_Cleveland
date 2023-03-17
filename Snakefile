@@ -7,6 +7,7 @@ S3 = S3RemoteProvider(
 )
 
 prefix = config["prefix"]
+filename = config["filename"]
 
 rule get_radioset:
     input:
@@ -14,7 +15,7 @@ rule get_radioset:
         S3.remote(prefix + "download/cell_annotation_all.csv"),
         S3.remote(prefix + "download/XRT_CTD2_Dose_Response.xlsx")
     output:
-        prefix + "RadioSet_Cleveland.rds"
+        S3.remote(prefix + filename)
     shell:
         """
         Rscript scripts/get_Cleveland.R {prefix}       
