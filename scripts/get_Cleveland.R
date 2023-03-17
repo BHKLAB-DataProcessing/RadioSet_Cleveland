@@ -15,6 +15,7 @@ options(stringsAsFactors = FALSE)
 
 args <- commandArgs(trailingOnly = TRUE)
 work_dir <- args[1]
+filename <- args[2]
 
 responsedata <- read.xls(file.path(work_dir, "download/XRT_CTD2_Dose_Response.xlsx"), 1, stringsAsFactors = F)
 responsedata <- responsedata[, -c(43:48)]
@@ -155,7 +156,7 @@ Cleveland <- RadioSet(
   verify = TRUE
 )
 
-saveRDS(Cleveland, file = file.path(work_dir, "RadioSet_Cleveland.rds"))
+saveRDS(Cleveland, file = file.path(work_dir, filename))
 
 
 # radSig <- radSensitivitySig(Cleveland, "Kallisto_0.46.1.rnaseq", sensitivity.measure="AUC_published", nthread=3)

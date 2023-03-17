@@ -18,7 +18,7 @@ rule get_radioset:
         S3.remote(prefix + filename)
     shell:
         """
-        Rscript scripts/get_Cleveland.R {prefix}       
+        Rscript scripts/get_Cleveland.R {prefix} {filename}       
         """
 
 rule download_data:
