@@ -9,7 +9,7 @@ library(Biobase)
 library(gdata)
 library(parallel)
 library(abind)
-library(RadioGx)
+# library(RadioGx)
 library(PharmacoGx)
 options(stringsAsFactors = FALSE)
 
@@ -143,21 +143,21 @@ cells <- PharmacoGx::sampleInfo(CCLE)
 CCLEint <- PharmacoGx::subsetTo(CCLE, cells = intersect(rownames(cell), rownames(cells)))
 
 
-Cleveland <- RadioSet(
-  name = "Cleveland",
-  cell = cell,
-  molecularProfiles = CCLEint@molecularProfiles,
-  radiation = data.frame("radiation", row.names = "radiation"),
-  sensitivityInfo = info,
-  sensitivityRaw = raw,
-  sensitivityProfiles = profiles,
-  datasetType = c("sensitivity"),
-  curationCell = curationCell,
-  curationTissue = curationTissue,
-  verify = TRUE
-)
-
-saveRDS(Cleveland, file = file.path(work_dir, filename))
+# Cleveland <- RadioSet(
+#   name = "Cleveland",
+#   cell = cell,
+#   molecularProfiles = CCLEint@molecularProfiles,
+#   radiation = data.frame("radiation", row.names = "radiation"),
+#   sensitivityInfo = info,
+#   sensitivityRaw = raw,
+#   sensitivityProfiles = profiles,
+#   datasetType = c("sensitivity"),
+#   curationCell = curationCell,
+#   curationTissue = curationTissue,
+#   verify = TRUE
+# )
+# 
+# saveRDS(Cleveland, file = file.path(work_dir, filename))
 
 
 # radSig <- radSensitivitySig(Cleveland, "Kallisto_0.46.1.rnaseq", sensitivity.measure="AUC_published", nthread=3)
