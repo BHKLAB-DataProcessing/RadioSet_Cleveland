@@ -12,7 +12,6 @@ library(abind)
 library(RadioGx)
 
 sessionInfo()
-packageVersion("RadioGx")
 
 library(PharmacoGx)
 options(stringsAsFactors = FALSE)
