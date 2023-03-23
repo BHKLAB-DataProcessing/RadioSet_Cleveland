@@ -4,8 +4,8 @@
 #
 ##########################################
 
-# library(Biobase)
-# library(xlsx)
+library(Biobase)
+library(xlsx)
 library(gdata)
 library(parallel)
 library(abind)
