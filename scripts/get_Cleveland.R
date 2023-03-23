@@ -23,13 +23,13 @@ filename <- args[2]
 
 # work_dir <- '/Users/minoru/Code/bhklab/DataProcessing/RadioGenomics/RadioSet_Cleveland-snakemake/'
 
-responsedata <- read_excel(file.path(work_dir, "data/XRT_CTD2_Dose_Response.xlsx"))
+responsedata <- read_excel(paste0(work_dir, "download/XRT_CTD2_Dose_Response.xlsx"))
 # responsedata <- responsedata[, -c(43:48)]
 
 
 #### Now the cell.all file has the correct annotations.
 
-cell.all <- read.csv(file.path(work_dir, "download/cell_annotation_all.csv"))
+cell.all <- read.csv(paste0(work_dir, "download/cell_annotation_all.csv"))
 # cell.all <- read.csv("~/Code/Github/PharmacoGx-private/inst/extdata/cell_annotation_all.csv")
 cell.exact.match <- match(responsedata$cell_line, cell.all$Cleveland.cellid)
 
@@ -76,7 +76,7 @@ profiles <- data.frame(responsedata1$AUC)
 colnames(profiles) <- c("AUC_published")
 rownames(profiles) <- rownames(info)
 
-CCLE <- readRDS(file.path(work_dir, "download/CCLE.rds"))
+CCLE <- readRDS(paste0(work_dir, "download/CCLE.rds"))
 
 curationCell <- cell.all[cell.exact.match, c("unique.cellid", "Cleveland.cellid")]
 curationTissue <- cell.all[cell.exact.match, c("unique.tissueid", "Cleveland.tissueid")]
