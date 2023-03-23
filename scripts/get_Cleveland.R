@@ -10,7 +10,11 @@ library(gdata)
 library(parallel)
 library(abind)
 library(RadioGx)
-# library(PharmacoGx)
+
+sessionInfo()
+packageVersion("RadioGx")
+
+library(PharmacoGx)
 options(stringsAsFactors = FALSE)
 
 args <- commandArgs(trailingOnly = TRUE)
