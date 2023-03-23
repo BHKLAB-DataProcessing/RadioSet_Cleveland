@@ -10,7 +10,7 @@ library(gdata)
 library(parallel)
 library(abind)
 library(RadioGx)
-library(PharmacoGx)
+# library(PharmacoGx)
 options(stringsAsFactors = FALSE)
 
 args <- commandArgs(trailingOnly = TRUE)
