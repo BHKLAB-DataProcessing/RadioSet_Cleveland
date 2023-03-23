@@ -4,9 +4,10 @@
 #
 ##########################################
 
-library(Biobase)
-library(xlsx)
-library(gdata)
+# library(Biobase)
+# library(xlsx)
+# library(gdata)
+library(readxl)
 library(parallel)
 library(abind)
 library(RadioGx)
@@ -20,8 +21,10 @@ args <- commandArgs(trailingOnly = TRUE)
 work_dir <- args[1]
 filename <- args[2]
 
-responsedata <- read.xls(file.path(work_dir, "download/XRT_CTD2_Dose_Response.xlsx"), 1, stringsAsFactors = F)
-responsedata <- responsedata[, -c(43:48)]
+# work_dir <- '/Users/minoru/Code/bhklab/DataProcessing/RadioGenomics/RadioSet_Cleveland-snakemake/'
+
+responsedata <- read_excel(file.path(work_dir, "data/XRT_CTD2_Dose_Response.xlsx"))
+# responsedata <- responsedata[, -c(43:48)]
 
 
 #### Now the cell.all file has the correct annotations.
